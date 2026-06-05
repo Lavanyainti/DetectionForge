@@ -3,6 +3,7 @@ import getTransporter from "../utils/sendMail.js";
 export const createDemo=async (req,res)=>{
     try{
         const {name,email,company,role,message,source,user_agent}=req.body
+        console.log("name: "+name)
         const demo=new Demo({name,email,company,role,message,source,user_agent});
         const result=await demo.save();
         console.log("controllermail: "+process.env.EMAIL_USER)

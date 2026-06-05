@@ -1,4 +1,5 @@
 import express from "express"
+const app=express();
 import cors from "cors"
 import dotenv from 'dotenv'
 
@@ -8,13 +9,14 @@ import mongoose from "mongoose"
 import path from 'path'
 import demoRouter from './routes/demoRouter.js'
 
-const app=express();
+app.use(cors())
 
-app.use(cors({
-    origin: ["https://detectionforge-client.appwrite.network"], 
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-  }));app.use(express.json())
+// app.use(cors({
+//     origin: ["https://detectionforge-client.appwrite.network"], 
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true
+//   }));
+app.use(express.json())
 
 const port=process.env.PORT || 5011;
 
