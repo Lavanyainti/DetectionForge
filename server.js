@@ -24,6 +24,10 @@ app.listen(port,()=>{
     console.log(`server listening at port ${port}`)
 })
 
+app.get("/", (req, res) => {
+  res.send("Backend is running successfully!");
+});
+
 app.use('/api',demoRouter)
 // app.use('/api',testRouter)
 
