@@ -8,15 +8,23 @@ dotenv.config();
 import mongoose from "mongoose"
 import path from 'path'
 import demoRouter from './routes/demoRouter.js'
+import authRouter from './routes/authRoute.js'
+import cookieParser from "cookie-parser";
 
-//app.use(cors())
+// app.use(
+//   cors({
+//     origin: "http://localhost:8080", // nee frontend URL
+//     credentials: true,
+//   })
+// );
 
-app.use(cors({
-     origin: ["https://detectionforge-client.appwrite.network"], 
-     methods: ["GET", "POST", "PUT", "DELETE"],
-     credentials: true
+ app.use(cors({
+      origin: ["https://detectionforge-client.appwrite.network"], 
+      methods: ["GET", "POST", "PUT", "DELETE"],
+      credentials: true
    }));
 app.use(express.json())
+app.use(cookieParser());
 
 const port=process.env.PORT || 5011;
 
@@ -29,7 +37,7 @@ app.get("/", (req, res) => {
 });
 
 app.use('/api',demoRouter)
-// app.use('/api',testRouter)
+app.use('/api',authRouter)
 
 mongoose.connect(process.env.DB_URL).then((result)=>{
     console.log("DB connected succesfully")
