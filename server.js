@@ -46,18 +46,18 @@ mongoose.connect(process.env.DB_URL).then((result)=>{
     console.log(err)
 })
 
-const admin = await Auth.findOne({
-  email: process.env.ADMIN_EMAIL,
-});
+// const admin = await Auth.findOne({
+//   email: process.env.ADMIN_EMAIL,
+// });
 
-if(admin){
-    console.log("admin already existed")
-}
+// if(admin){
+//     console.log("admin already existed")
+// }
 
-if (!admin) {
-  await Auth.create({
-    email: "admin@detectionforge.com",
-    password: "Admin@123",
-    role: "admin",
-  });
-}
+// if (!admin) {
+//   await Auth.create({
+//     email: "admin@detectionforge.com",
+//     password: "Admin@123",
+//     role: "admin",
+//   });
+// }
