@@ -21,7 +21,7 @@ import Auth from "./model/authModel.js";
 
   app.use(cors({
        origin: ["https://detectionforge-client.appwrite.network"], 
-       methods: ["GET", "POST", "PUT", "DELETE"],
+       methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
        credentials: true
     }));
 app.use(express.json())
