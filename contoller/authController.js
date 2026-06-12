@@ -1,6 +1,8 @@
 import Auth from '../model/authModel.js'
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import getTransporter from "../utils/sendMail.js";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -136,6 +138,7 @@ export const loginMail=async(req,res)=>{
         let finalData={
             id:userLogin._id,
             email:userLogin.email,
+            role:userLogin.role,
             expiresAt:expiresAt,
         }
         console.log(finalData)
@@ -165,6 +168,101 @@ export const logout = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Logout failed",
+    });
+  }
+};
+
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await Auth.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
+
+    await user.save();
+
+    const resetLink =
+      `https://detectionforge-client.appwrite.network/resetPassword/${token}`;
+
+    await getTransporter().sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Reset Your Password",
+      html: `
+        <h2>Password Reset Request</h2>
+
+        <p>Click the button below to reset your password:</p>
+
+        <a href="${resetLink}">
+          Reset Password
+        </a>
+
+        <p>This link expires in 15 minutes.</p>
+      `,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Reset link sent to your email",
+    });
+
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    const user = await Auth.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired token",
+      });
+    }
+
+    user.password = newPassword;
+
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successful",
+    });
+
+  } catch (err) {
+    console.log(err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.message,
     });
   }
 };

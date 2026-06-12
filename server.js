@@ -10,19 +10,20 @@ import path from 'path'
 import demoRouter from './routes/demoRouter.js'
 import authRouter from './routes/authRoute.js'
 import cookieParser from "cookie-parser";
+import Auth from "./model/authModel.js";
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:8080", // nee frontend URL
-//     credentials: true,
-//   })
-// );
+//  app.use(
+//    cors({
+//      origin: "http://localhost:8080", // nee frontend URL
+//      credentials: true,
+//    })
+//  );
 
- app.use(cors({
-      origin: ["https://detectionforge-client.appwrite.network"], 
-      methods: ["GET", "POST", "PUT", "DELETE"],
-      credentials: true
-   }));
+  app.use(cors({
+       origin: ["https://detectionforge-client.appwrite.network"], 
+       methods: ["GET", "POST", "PUT", "DELETE"],
+       credentials: true
+    }));
 app.use(express.json())
 app.use(cookieParser());
 
@@ -44,3 +45,19 @@ mongoose.connect(process.env.DB_URL).then((result)=>{
 }).catch((err)=>{
     console.log(err)
 })
+
+const admin = await Auth.findOne({
+  email: process.env.ADMIN_EMAIL,
+});
+
+if(admin){
+    console.log("admin already existed")
+}
+
+if (!admin) {
+  await Auth.create({
+    email: "admin@detectionforge.com",
+    password: "Admin@123",
+    role: "admin",
+  });
+}

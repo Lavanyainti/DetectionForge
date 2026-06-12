@@ -16,10 +16,22 @@ const authSchema=mongoose.Schema({
         enum: ["local", "google"],
         default: "local"
     },
+    role:{
+        type:String,
+        enum:["admin","user"],
+        default:"user"
+    },
     createdAt:{
         type:Date,
         default:Date.now
-    }
+    },resetPasswordToken: {
+    type: String,
+    default: null
+},
+resetPasswordExpires: {
+    type: Date,
+    default: null
+},
      
 })
 
